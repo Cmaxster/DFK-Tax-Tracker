@@ -1,38 +1,43 @@
 import React from 'react';
 import './App.css';
-// import * as crypto from '@harmony-js/crypto';
-// import * as utils from '@harmony-js/utils';
-import * as core from '@harmony-js/core';
-import {Buffer} from 'buffer';
 
-const { Harmony } = require('@harmony-js/core');
+const axios = require('axios');
 
-const {
-  ChainID,
-  ChainType,
-  hexToNumber,
-  numberToHex,
-  fromWei,
-  Units,
-  Unit,
-} = require('@harmony-js/utils');
+// axios.get('https://api.harmony.one?method=hmy_getBalance&params=one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy')
+//   .then(response => {
+//     console.log(response.data);
+//   }, error => {
+//     console.log(error);
+//   });
 
-const hmy = new Harmony(
-  'https://api.s0.b.hmny.io/',
-  {
-      chainType: ChainType.Harmony,
-      chainId: ChainID.HmyTestnet,
+var blockTest:String;
+
+const data = JSON.stringify({
+  "jsonrpc": "2.0",
+  "method": "hmyv2_getBalance",
+  "params": [
+    "0xc6cc22EFDCcDd3f06ce9588798CA2f001EbdEe31"
+  ],
+  "id": 1
+});
+
+var config = {
+  method: 'post',
+  url: 'https://api.harmony.one',
+  headers: { 
+    'Content-Type': 'application/json'
   },
-);
+  data : data
+};
 
-var blockTest:Number;
+axios(config)
+.then(function (response:any) {
+  console.log(JSON.stringify(response.data));
+})
+.catch(function (error:any) {
+  console.log(error);
+});
 
-hmy.blockchain
-  .getBalance({ address: 'one103q7qe5t2505lypvltkqtddaef5tzfxwsse4z7' })
-  .then((response:any) => {
-    blockTest = fromWei(hexToNumber(response.result), Units.one);
-    //console.log('balance in ONEs: ' + fromWei(hexToNumber(response.result), Units.one));
-  });
 
 function App() {
   return (
