@@ -17,7 +17,7 @@ const data = JSON.stringify({
         "pageSize": 1000,
         "fullTx": true,
         "txType": "ALL",
-        "order": "ASC"
+        "order": "DESC"
     }],
     "id": 1
 });
@@ -31,8 +31,6 @@ var config = {
   data : data
 };
 
-
-
 function App() {
 
   interface Transaction {
@@ -40,6 +38,7 @@ function App() {
     blockHash: string;
     ethHash: string;
     input: any;
+    gas: number;
   }
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -56,24 +55,13 @@ function App() {
     });
   }, [])
 
-  /*
-    useEffect's second parameter would tell the useEffect when to run
-    essentially when any variable inside the array changes it runs it again
-    but with an empty array it only runs once
-  */
-
-  /*
-    it was constantly refreshing because API call was happening right in the component
-    which would trigger it to run again as soon as it sets the state
-    which would run it again
-    and so on..
-  */
-
   const listTransactions = transactions.map((tx) =>
    <TransactionEntry 
     tx_timestamp = {tx.timestamp}
     tx_ethHash = {tx.ethHash}
     tx_input = {tx.input}
+    tx_gas = {tx.gas}
+    key = {tx.ethHash}
    />
   );
 
@@ -83,6 +71,12 @@ function App() {
         <h1>Testing Harmony Blockchain API..</h1>
         <p>{blockTest}</p>
         <table>
+          <thead>
+            <td>Date:</td>
+            <td>Transaction Hash:</td>
+            <td>Method:</td>
+            <td>Gas:</td>
+          </thead>
           <tbody>
             {listTransactions}
           </tbody>
