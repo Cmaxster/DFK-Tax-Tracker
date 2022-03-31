@@ -39,6 +39,7 @@ function App() {
     ethHash: string;
     input: any;
     gas: number;
+    gasPrice: number; 
   }
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -61,6 +62,7 @@ function App() {
     tx_ethHash = {tx.ethHash}
     tx_input = {tx.input}
     tx_gas = {tx.gas}
+    tx_gasPrice = {tx.gasPrice}
     key = {tx.ethHash}
    />
   );
