@@ -1,7 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { formatEpochToUtc, truncateString, totalGasUsed } from './utilities';
-const axios = require('axios');
 
 type props = {
     tx_ethHash: string,
@@ -12,7 +11,7 @@ type props = {
 };
 
 type txReceipt = {
-        gasUsed: number
+    gasUsed: number
 }
 
 var data;
@@ -25,23 +24,6 @@ function TransactionEntry(props:props) {
     useEffect(() => {
         data = JSON.stringify({
             "transaction": props.tx_input
-        });
-        
-        axios({url:'http://localhost:3001/decode/'+props.tx_input})
-        .then(function (response:any) {
-            console.log(response.data.name);
-            setDecodedInput(response.data.name)
-        }).catch(function (error:any) {
-            console.log(error);
-            return 'not available'
-        });
-
-        axios({url:'http://localhost:3001/receipt/'+props.tx_ethHash})
-        .then(function (response:any) {
-            setTxReceiptData(response.data)
-        }).catch(function (error:any) {
-            console.log(error);
-            return
         });
 
     }, [])
