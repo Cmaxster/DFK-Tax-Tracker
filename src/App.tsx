@@ -32,7 +32,7 @@ function App() {
   }
   
   //const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [transactionData, setTransactionData] = useState<Transaction[]>([]);
+  const [transactionData, setTransactionData] = useState<Array<Transaction>>([]);
   const [walletAddress, setWalletAddress] = useState<string>("0xc6cc22EFDCcDd3f06ce9588798CA2f001EbdEe31"); //default value
 
   const onWalletTextFieldChange = (e: any) => setWalletAddress(e.target.value);
@@ -44,11 +44,11 @@ function App() {
     console.log('>> [App] Attempting Transaction Pull')
     axios({url:'http://localhost:3001/transactions/'+walletAddress})
         .then(function (response:any) {
-            console.log('>> [App] Transaction pull = SUCCESS.. Data received: ',response);
-            setTransactionData(response.data.transactions)
+            console.log('>> [App] Transaction pull = SUCCESS.. Data received: ',response.data);
+            setTransactionData(response.data)
         }).catch(function (error:any) {
             console.log('>> [App] Something went wrong with transaction pull: ',error);
-            return 'not available'
+            return error
         });
   }
 
@@ -80,7 +80,7 @@ function App() {
       return <DataGrid 
           rows={rows} 
           columns={columns}
-          pageSize={5}
+          pageSize={10}
           rowsPerPageOptions={[10]} 
         />
     }
