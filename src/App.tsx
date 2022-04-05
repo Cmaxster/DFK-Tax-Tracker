@@ -31,7 +31,7 @@ function App() {
     gasUsed: Number;
   }
   
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  //const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [transactionData, setTransactionData] = useState<Transaction[]>([]);
   const [walletAddress, setWalletAddress] = useState<string>("0xc6cc22EFDCcDd3f06ce9588798CA2f001EbdEe31"); //default value
 
@@ -52,15 +52,15 @@ function App() {
         });
   }
 
-  let rows: GridRowsProp = transactionData?.map(tx => {
-    const newRow = {
+  let rows: GridRowsProp 
+  if(transactionData && transactionData.length > 0) rows = transactionData.map(tx => {
+    return {
       id: tx.ethHash,
       timestamp: formatEpochToUtc(tx.timestamp),
       ethHash: tx.ethHash,
       input: tx.input,
       gas: tx.receipt.gasUsed 
     } as Object;
-    return newRow;
   });
   let columns: GridColDef[] = [
     {field: "id", hide: true },
@@ -74,6 +74,17 @@ function App() {
     console.log('>> [app] UseEffect > ')
     //rows 
   },[])
+
+  const renderDataGrid = () =>{
+    if(transactionData && transactionData.length > 0) {
+      return <DataGrid 
+          rows={rows} 
+          columns={columns}
+          pageSize={5}
+          rowsPerPageOptions={[10]} 
+        />
+    }
+  }
 
   return (
     <div className="App">
@@ -95,12 +106,7 @@ function App() {
       </AppBar>
     </Box>
       <main>
-      <DataGrid 
-        rows={rows} 
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[10]} 
-      />
+        {renderDataGrid()}
       </main>
     </div>
   );
