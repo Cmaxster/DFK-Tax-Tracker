@@ -9,8 +9,9 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
+
+import { formatEpochToUtc, truncateString, totalGasUsed } from './utilities';
 
 const axios = require('axios');
 
@@ -22,7 +23,12 @@ function App() {
     ethHash: string;
     input: any;
     gas: number;
-    gasPrice: number; 
+    gasPrice: number;
+    receipt: Receipt;
+  }
+
+  interface Receipt {
+    gasUsed: Number;
   }
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -46,20 +52,28 @@ function App() {
         });
   }
 
-  useEffect(() => { // might use this at some point.. placeholder..
-    console.log('>> [app] UseEffect > ')
-  },[])
+  let rows: GridRowsProp = transactionData?.map(tx => {
+    const newRow = {
+      id: tx.ethHash,
+      timestamp: formatEpochToUtc(tx.timestamp),
+      ethHash: tx.ethHash,
+      input: tx.input,
+      gas: tx.receipt.gasUsed 
+    } as Object;
+    return newRow;
+  });
+  let columns: GridColDef[] = [
+    {field: "id", hide: true },
+    {field: "timestamp", headerName: "Date", width: 150, },
+    {field: "ethHash", headerName: "Address", width: 150, },
+    {field: "input", headerName: "Method", width: 150, },
+    {field: "gas", headerName: "Gas Fee", width: 150, },
+  ]
 
-  const listTransactions = transactions.map((tx) =>
-   <TransactionEntry 
-    tx_timestamp = {tx.timestamp}
-    tx_ethHash = {tx.ethHash}
-    tx_input = {tx.input}
-    tx_gas = {tx.gas}
-    tx_gasPrice = {tx.gasPrice}
-    key = {tx.ethHash}
-   />
-  );
+  useEffect(() => { 
+    console.log('>> [app] UseEffect > ')
+    //rows 
+  },[])
 
   return (
     <div className="App">
@@ -81,17 +95,12 @@ function App() {
       </AppBar>
     </Box>
       <main>
-        <table>
-          <thead>
-            <td>Date:</td>
-            <td>Transaction Hash:</td>
-            <td>Method:</td>
-            <td>Gas:</td>
-          </thead>
-          <tbody>
-            {listTransactions}
-          </tbody>
-        </table>
+      <DataGrid 
+        rows={rows} 
+        columns={columns}
+        pageSize={5}
+        rowsPerPageOptions={[10]} 
+      />
       </main>
     </div>
   );
