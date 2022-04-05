@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 import { useState, useEffect } from 'react';
-import TransactionEntry from './TransactionEntry';
 
 import TextField from '@mui/material/TextField';
 import AppBar from '@mui/material/AppBar';
@@ -15,21 +14,34 @@ import { formatEpochToUtc, truncateString, totalGasUsed } from './utilities';
 
 const axios = require('axios');
 
+interface Transaction {
+  timestamp: number;
+  blockHash: string;
+  ethHash: string;
+  input: any;
+  method: Method;
+  gas: number;
+  gasPrice: number;
+  receipt: Receipt;
+}
+
+interface Receipt {
+  gasUsed: Number;
+}
+
+interface Method {
+  name: string;
+}
+
+const parseMethod = (method:Method) => {
+  if(method && method.name) {
+    return method.name
+  } else {
+    return "N/A"
+  }
+}
+
 function App() {
-
-  interface Transaction {
-    timestamp: number;
-    blockHash: string;
-    ethHash: string;
-    input: any;
-    gas: number;
-    gasPrice: number;
-    receipt: Receipt;
-  }
-
-  interface Receipt {
-    gasUsed: Number;
-  }
   
   //const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [transactionData, setTransactionData] = useState<Array<Transaction>>([]);
@@ -58,7 +70,7 @@ function App() {
       id: tx.ethHash,
       timestamp: formatEpochToUtc(tx.timestamp),
       ethHash: tx.ethHash,
-      input: tx.input,
+      method: parseMethod(tx.method),
       gas: tx.receipt.gasUsed 
     } as Object;
   });
@@ -66,9 +78,11 @@ function App() {
     {field: "id", hide: true },
     {field: "timestamp", headerName: "Date", width: 150, },
     {field: "ethHash", headerName: "Address", width: 150, },
-    {field: "input", headerName: "Method", width: 150, },
+    {field: "method", headerName: "Method", width: 150, },
     {field: "gas", headerName: "Gas Fee", width: 150, },
   ]
+
+  
 
   useEffect(() => { 
     console.log('>> [app] UseEffect > ')
